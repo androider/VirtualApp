@@ -35,9 +35,11 @@ public class ClipBoardStub extends BinderInvocationProxy {
     @Override
     protected void onBindMethods() {
         super.onBindMethods();
-        addMethodProxy(new ReplaceLastPkgMethodProxy("getPrimaryClip"));
+        //addMethodProxy(new ReplaceLastPkgMethodProxy("getPrimaryClip"));
+        addMethodProxy(new MyGetPrimaryClip("getPrimaryClip"));
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            addMethodProxy(new ReplaceLastPkgMethodProxy("setPrimaryClip"));
+            //addMethodProxy(new ReplaceLastPkgMethodProxy("setPrimaryClip"));
+            addMethodProxy(new MySetPrimaryClip("setPrimaryClip"));
             addMethodProxy(new ReplaceLastPkgMethodProxy("getPrimaryClipDescription"));
             addMethodProxy(new ReplaceLastPkgMethodProxy("hasPrimaryClip"));
             addMethodProxy(new ReplaceLastPkgMethodProxy("addPrimaryClipChangedListener"));

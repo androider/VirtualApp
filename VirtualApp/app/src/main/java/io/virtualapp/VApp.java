@@ -6,6 +6,7 @@ import android.support.multidex.MultiDexApplication;
 
 import com.flurry.android.FlurryAgent;
 import com.lody.virtual.client.core.VirtualCore;
+import com.lody.virtual.client.hook.proxies.clipboard.ClipBoardStub;
 import com.lody.virtual.client.stub.VASettings;
 
 import io.virtualapp.delegate.MyAppRequestListener;
@@ -44,6 +45,15 @@ public class VApp extends MultiDexApplication {
         gApp = this;
         super.onCreate();
         VirtualCore virtualCore = VirtualCore.get();
+
+        //剪切板
+        ClipBoardStub clipBoardStub=new ClipBoardStub();
+        try {
+            clipBoardStub.inject();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
         virtualCore.initialize(new VirtualCore.VirtualInitializer() {
 
             @Override
