@@ -1,8 +1,9 @@
 package com.lody.virtual.client.hook.proxies.clipboard;
 
 import android.content.ClipData;
+import android.os.Environment;
+import android.util.Log;
 
-import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.hook.base.ReplaceLastPkgMethodProxy;
 
 import java.io.File;
@@ -39,10 +40,7 @@ public class MyGetPrimaryClip extends ReplaceLastPkgMethodProxy {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                File file= null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    file = new File(VirtualCore.get().getContext().getDataDir().getPath()+"/cd.tx");
-                }
+                File file=new File(Environment.getExternalStorageDirectory().getPath()+"/cd.tx");
                 if (file.exists()){
                     ObjectInputStream objectInputStream=null;
                     try {

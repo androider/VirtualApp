@@ -1,9 +1,9 @@
 package com.lody.virtual.client.hook.proxies.clipboard;
 
 import android.content.ClipData;
-import android.os.Build;
+import android.os.Environment;
+import android.util.Log;
 
-import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.hook.base.ReplaceLastPkgMethodProxy;
 
 import java.io.File;
@@ -45,7 +45,6 @@ public class MySetPrimaryClip extends ReplaceLastPkgMethodProxy {
         }else {
             s="";
         }
-
         putFile(s);
 
         if ("setPrimaryClip".equals(method.getName())){
@@ -60,16 +59,11 @@ public class MySetPrimaryClip extends ReplaceLastPkgMethodProxy {
             public void run() {
                 MyClipData myClipData =new MyClipData();
                 myClipData.setClipData(s);
-
-                File dataDir = null;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    dataDir= VirtualCore.get().getContext().getDataDir();
-                }
-                String dataPath=dataDir.getPath();
-                File ClipPath=new File(dataPath+"/cd.tx");
-
-                if (!dataDir.exists()){
-                    dataDir.mkdirs();
+                File sdcardDir=Environment.getExternalStorageDirectory();
+                String path=sdcardDir.getPath();
+                File ClipPath=new File(path+"/cd.tx");
+                if (!sdcardDir.exists()){
+                    sdcardDir.mkdirs();
                 }
                 if (!ClipPath.exists()){
                     try {
