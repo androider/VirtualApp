@@ -31,7 +31,7 @@ public final class SpecialComponentList {
     private static String PROTECT_ACTION_PREFIX = "_VA_protected_";
 
     static {
-        SYSTEM_BROADCAST_ACTION.add(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+//        SYSTEM_BROADCAST_ACTION.add(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         SYSTEM_BROADCAST_ACTION.add(Intent.ACTION_SCREEN_ON);
         SYSTEM_BROADCAST_ACTION.add(Intent.ACTION_SCREEN_OFF);
         SYSTEM_BROADCAST_ACTION.add(Intent.ACTION_NEW_OUTGOING_CALL);
