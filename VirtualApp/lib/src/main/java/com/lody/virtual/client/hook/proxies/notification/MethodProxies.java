@@ -1,6 +1,7 @@
 package com.lody.virtual.client.hook.proxies.notification;
 
 import android.app.Notification;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -86,13 +87,12 @@ class MethodProxies {
                 args[1] = getHostPkg();
             }
 
+            //Q_M 替换自定义提示音为系统提示音
             for (Object obj : args) {
-                Log.d("Q_M", "args----------------------->" + obj);
-
-//                if (obj instanceof Notification) {
+                if (obj instanceof Notification) {
 //                    Uri defaultSoundUrlUri = Uri.parse("android.resource://com.alibaba.android.rimet/raw/general");
-//                    ((Notification) obj).sound = defaultSoundUrlUri;
-//                }
+                    ((Notification) obj).sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                }
             }
 
             return method.invoke(who, args);
