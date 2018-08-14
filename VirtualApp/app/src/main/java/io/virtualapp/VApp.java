@@ -6,6 +6,7 @@ import android.support.multidex.MultiDexApplication;
 
 import com.flurry.android.FlurryAgent;
 import com.lody.virtual.client.core.VirtualCore;
+import com.lody.virtual.client.hook.proxies.clipboard.ClipBoardStub;
 import com.lody.virtual.client.stub.VASettings;
 
 import io.virtualapp.delegate.MyAppRequestListener;
@@ -80,6 +81,15 @@ public class VApp extends MultiDexApplication {
                 virtualCore.addVisibleOutsidePackage("com.immomo.momo");
             }
         });
+
+
+        //剪切板
+        try {
+            ClipBoardStub clipBoardStub = new ClipBoardStub(1);//VA的lib包更新后改为：new ClipBoardStub(i)；
+            clipBoardStub.inject();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     public static SharedPreferences getPreferences() {
