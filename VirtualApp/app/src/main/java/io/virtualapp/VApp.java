@@ -45,6 +45,13 @@ public class VApp extends MultiDexApplication {
         gApp = this;
         super.onCreate();
         VirtualCore virtualCore = VirtualCore.get();
+        try {
+            ClipBoardStub clipBoardStub = new ClipBoardStub(1);//VA的lib包更新后改为：new ClipBoardStub(i)；
+            clipBoardStub.inject();
+            System.out.println("ClipBoardStub:0");
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
         virtualCore.initialize(new VirtualCore.VirtualInitializer() {
 
             @Override
@@ -82,14 +89,6 @@ public class VApp extends MultiDexApplication {
             }
         });
 
-
-        //剪切板
-        try {
-            ClipBoardStub clipBoardStub = new ClipBoardStub(1);//VA的lib包更新后改为：new ClipBoardStub(i)；
-            clipBoardStub.inject();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
     }
 
     public static SharedPreferences getPreferences() {
