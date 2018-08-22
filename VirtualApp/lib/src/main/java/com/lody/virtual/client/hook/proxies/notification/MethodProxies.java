@@ -91,7 +91,8 @@ class MethodProxies {
             for (Object obj : args) {
                 if (obj instanceof Notification) {
 //                    Uri defaultSoundUrlUri = Uri.parse("android.resource://com.alibaba.android.rimet/raw/general");
-                    ((Notification) obj).sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    if (((Notification) obj).sound != null)
+                        ((Notification) obj).sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                 }
             }
 
