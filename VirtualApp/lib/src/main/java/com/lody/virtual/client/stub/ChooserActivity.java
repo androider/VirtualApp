@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.lody.virtual.R;
 import com.lody.virtual.client.env.Constants;
@@ -22,10 +23,11 @@ public class ChooserActivity extends ResolverActivity {
         Intent intent = Intent.createChooser(target, "");
         ACTION = intent.getAction();
     }
+
     public static boolean check(Intent intent) {
         try {
             return TextUtils.equals(ACTION, intent.getAction())
-                    ||TextUtils.equals(Intent.ACTION_CHOOSER, intent.getAction());
+                    || TextUtils.equals(Intent.ACTION_CHOOSER, intent.getAction());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -47,6 +49,9 @@ public class ChooserActivity extends ResolverActivity {
             return;
         }
         Intent target = (Intent) targetParcelable;
+
+        //Log.d("Q_M:", getClass().getSimpleName() + " target::" + target.toURI());
+
         CharSequence title = intent.getCharSequenceExtra(Intent.EXTRA_TITLE);
         if (title == null) {
             title = getString(R.string.choose);

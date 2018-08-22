@@ -21,6 +21,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PatternMatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ import com.lody.virtual.R;
 import com.lody.virtual.client.VClientImpl;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.ipc.VActivityManager;
+import com.lody.virtual.client.ipc.VPackageManager;
 import com.lody.virtual.helper.utils.Reflect;
 import com.lody.virtual.helper.utils.VLog;
 import com.lody.virtual.os.VUserHandle;
@@ -489,9 +491,25 @@ public class ResolverActivity extends Activity implements AdapterView.OnItemClic
                 currentResolveList = mBaseResolveList;
                 mOrigResolveList = null;
             } else {
-                currentResolveList = mOrigResolveList = mPm.queryIntentActivities(
-                        mIntent, PackageManager.MATCH_DEFAULT_ONLY
-                                | (mAlwaysUseOption ? PackageManager.GET_RESOLVED_FILTER : 0));
+                //Log.d("Q_M", getClass().getSimpleName() + " else intent " + mIntent.toURI());
+
+                //TODO Q_M 因为这个Activity运行在宿主进程里面，
+                //TODO Q_M 所以mPm.queryIntentActivities 这个方法不会被hook到
+                //所以他查询的是系统的方法，而我们需要让他查询插件的方法
+                int userId = VUserHandle.myUserId();
+                currentResolveList = mOrigResolveList = VPackageManager.get()
+                        .queryIntentActivities(mIntent,
+                                mIntent.resolveTypeIfNeeded(getContentResolver()),
+                                0, userId);
+
+                if (currentResolveList == null || currentResolveList.size() == 0) {
+                    currentResolveList = mOrigResolveList = mPm.queryIntentActivities(
+                            mIntent, PackageManager.MATCH_DEFAULT_ONLY
+                                    | (mAlwaysUseOption ? PackageManager.GET_RESOLVED_FILTER : 0));
+                }
+
+                //Log.d("Q_M", getClass().getSimpleName() + " else currentResolveList " + currentResolveList);
+
                 // Filter out any activities that the launched uid does not
                 // have permission for.  We don't do this when we have an explicit
                 // list of resolved activities, because that only happens when

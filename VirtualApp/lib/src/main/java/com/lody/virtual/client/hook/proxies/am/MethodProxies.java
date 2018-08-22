@@ -388,7 +388,7 @@ class MethodProxies {
             intent.setDataAndType(intent.getData(), resolvedType);
             IBinder resultTo = resultToIndex >= 0 ? (IBinder) args[resultToIndex] : null;
             int userId = VUserHandle.myUserId();
-
+            //Log.d("Q_M", "StartActivity "+intent.toURI());
             if (ComponentUtils.isStubComponent(intent)) {
                 return method.invoke(who, args);
             }
@@ -417,6 +417,8 @@ class MethodProxies {
             }
             // chooser
             if (ChooserActivity.check(intent)) {
+                //Log.d("Q_M", "StartActivity yes：" + intent.getAction());
+
                 intent.setComponent(new ComponentName(getHostContext(), ChooserActivity.class));
                 intent.putExtra(Constants.EXTRA_USER_HANDLE, userId);
                 intent.putExtra(ChooserActivity.EXTRA_DATA, options);
@@ -1528,17 +1530,32 @@ class MethodProxies {
 
         @Override
         public Object call(Object who, Method method, Object... args) throws Throwable {
+
             Intent intent = (Intent) args[1];
             String type = (String) args[2];
             intent.setDataAndType(intent.getData(), type);
             if (VirtualCore.get().getComponentDelegate() != null) {
                 VirtualCore.get().getComponentDelegate().onSendBroadcast(intent);
             }
-            Intent newIntent = handleIntent(intent);
-            if (newIntent != null) {
-                args[1] = newIntent;
+
+            if (args[3] != null && args[3] instanceof IIntentReceiver) {
+//                Log.d("Q_M", "broadcastIntent IIntentReceiver");
+                // TODO Q_M 这里不知道这么处理对不对
+                // TODO Q_M 为了处理下面这种发送广播的方式
+                // context.sendOrderedBroadcast(intent, null, this.mBroadcastReceiver, null, -1, null, null);
+                // return method.invoke(who, args);
             } else {
-                return 0;
+                Intent newIntent = handleIntent(intent);
+                if (newIntent != null) {
+                    args[1] = newIntent;
+                } else {
+                    return 0;
+                }
+
+//                Log.d("Q_M", "broadcastIntent:intent.getExtras =" + intent.getExtras());
+//                Log.d("Q_M", "broadcastIntent:intent.toURI =" + intent.toURI());
+//                Log.d("Q_M", "broadcastIntent:newIntent.getExtras =" + newIntent.getExtras());
+//                Log.d("Q_M", "broadcastIntent:newIntent.toURI =" + newIntent.toURI());
             }
 
             if (args[7] instanceof String || args[7] instanceof String[]) {

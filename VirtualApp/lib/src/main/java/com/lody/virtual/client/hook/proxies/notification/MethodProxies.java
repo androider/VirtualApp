@@ -90,6 +90,11 @@ class MethodProxies {
             //Q_M 替换自定义提示音为系统提示音
             for (Object obj : args) {
                 if (obj instanceof Notification) {
+//                Log.d("Q_M", "args----------------------->" + obj);
+
+                //TODO Q_M 如果Notification使用自动定义声音，那么无法访问到，那么取一种折中的方式
+                //TODO Q_M 把原来插件中的自定义声音改成默认声音，但是这样处理有缺陷
+//                if (obj instanceof Notification) {
 //                    Uri defaultSoundUrlUri = Uri.parse("android.resource://com.alibaba.android.rimet/raw/general");
                     if (((Notification) obj).sound != null)
                         ((Notification) obj).sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
