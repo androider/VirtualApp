@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -52,6 +53,7 @@ import com.lody.virtual.client.stub.StubPendingService;
 import com.lody.virtual.client.stub.VASettings;
 import com.lody.virtual.helper.compat.ActivityManagerCompat;
 import com.lody.virtual.helper.compat.BuildCompat;
+import com.lody.virtual.helper.compat.UriCompat;
 import com.lody.virtual.helper.utils.ArrayUtils;
 import com.lody.virtual.helper.utils.BitmapUtils;
 import com.lody.virtual.helper.utils.ComponentUtils;
@@ -388,7 +390,7 @@ class MethodProxies {
             intent.setDataAndType(intent.getData(), resolvedType);
             IBinder resultTo = resultToIndex >= 0 ? (IBinder) args[resultToIndex] : null;
             int userId = VUserHandle.myUserId();
-            //Log.d("Q_M", "StartActivity "+intent.toURI());
+//            Log.d("Q_M", "StartActivity "+intent.toURI());
             if (ComponentUtils.isStubComponent(intent)) {
                 return method.invoke(who, args);
             }
@@ -440,10 +442,6 @@ class MethodProxies {
             if (activityInfo == null) {
                 VLog.e("VActivityManager", "Unable to resolve activityInfo : " + intent);
 
-                Log.d("Q_M", "---->StartActivity who=" + who);
-                Log.d("Q_M", "---->StartActivity intent=" + intent);
-                Log.d("Q_M", "---->StartActivity resultTo=" + resultTo);
-
                 if (intent.getPackage() != null && isAppPkg(intent.getPackage())) {
                     return ActivityManagerCompat.START_INTENT_NOT_RESOLVED;
                 }
@@ -455,8 +453,13 @@ class MethodProxies {
                     return 0;
                 }
 
+                //TODO Q_M 为了适配通过uri的方式调用外部相机拍照
+                Intent fakedIntent = UriCompat.fakeFileUri(intent);
+                args[intentIndex] = fakedIntent;
+
                 return method.invoke(who, args);
             }
+            //Log.d("Q_M","intent  -->" + intent.toURI());
             int res = VActivityManager.get().startActivity(intent, activityInfo, resultTo, options, resultWho, requestCode, VUserHandle.myUserId());
             if (res != 0 && resultTo != null && requestCode > 0) {
                 VActivityManager.get().sendActivityResult(resultTo, resultWho, requestCode);

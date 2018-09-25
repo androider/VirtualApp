@@ -27,11 +27,14 @@ import android.os.Parcel;
 import android.os.Process;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.lody.virtual.client.IVClient;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.env.SpecialComponentList;
 import com.lody.virtual.client.ipc.ProviderCall;
+import com.lody.virtual.client.ipc.VActivityManager;
 import com.lody.virtual.client.ipc.VNotificationManager;
 import com.lody.virtual.client.stub.VASettings;
 import com.lody.virtual.helper.collection.ArrayMap;
@@ -229,6 +232,15 @@ public class VActivityManagerService implements IActivityManager {
         }
     }
 
+    private String getAppNameByPID(int pid) {
+
+        for (ActivityManager.RunningAppProcessInfo processInfo : am.getRunningAppProcesses()) {
+            if (processInfo.pid == pid) {
+                return processInfo.processName;
+            }
+        }
+        return "";
+    }
 
     @Override
     public IBinder acquireProviderClient(int userId, ProviderInfo info) {
@@ -237,7 +249,13 @@ public class VActivityManagerService implements IActivityManager {
             callerApp = findProcessLocked(getCallingPid());
         }
         if (callerApp == null) {
-            throw new SecurityException("Who are you?");
+            //如果调用的进程是我们定义的调板进程，那么放开调用权限
+            //但是这个进程不能和VAMS 同一个进行，否则getCallingPid获取的是相机的进程
+            String name = getAppNameByPID(getCallingPid());
+            //Log.d("Q_M", "app_name = " + name);
+            if (TextUtils.isEmpty(name) || !name.contains("trampoline")) {
+                throw new SecurityException("Who are you?");
+            }
         }
         String processName = info.processName;
         ProcessRecord r;

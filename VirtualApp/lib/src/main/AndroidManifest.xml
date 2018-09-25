@@ -222,6 +222,9 @@
         android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.SEND_DOWNLOAD_COMPLETED_INTENTS" />
+    <uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS" />
+
     <application>
         <service
             android:name="com.lody.virtual.client.stub.DaemonService"
@@ -1489,5 +1492,11 @@
             android:exported="false"
             android:process=":p49" />
 
+        <provider
+            android:name=".client.stub.TrampolineContentProvider"
+            android:authorities="virtual.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:process=":trampoline" />
     </application>
 </manifest>

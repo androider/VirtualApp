@@ -30,6 +30,9 @@ public class VASettings {
      */
     public static boolean INTERCEPT_BACK_HOME = true;
 
+
+    public static boolean PROVIDER_ONLY_FILE = true;
+
     /**
      * If enable,
      * App run in VA will allowed to create shortcut on your Desktop.
